@@ -7,14 +7,16 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var goalsRouter = require('./routes/goals');
+var tasksRouter = require('./routes/tasks');
 const router = express.Router();
+var cors = require('cors');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
+app.use(cors());
 app.use('/', router);
 app.use(logger('dev'));
 app.use(express.json());
@@ -26,13 +28,14 @@ router.use((req, res, next) => {
   if (req.headers.authorization && req.headers.authorizatiion === 'cursodaw'); {
     next();
   }else {
-    res.json({ 'error': 'No se estan enviando las credenciales' });
+    res.status(401).json({ 'error': 'No credentials sent' });
   }
 })
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/goals', goalsRouter);
+app.use('/tasks', tasksRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -50,7 +53,7 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor Express escuchando en el puerto ${PORT}`);
 });
